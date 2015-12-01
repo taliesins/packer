@@ -659,6 +659,9 @@ if ($vm.State -eq [Microsoft.HyperV.PowerShell.VMState]::Running) {
 }
 
 func TypeScanCodes(vmName string, scanCodes string) error {
+	if len(scanCodes) == 0 {
+		return nil
+	}
 	var script = `
 param([string]$vmName, [string]$scanCodes)
 	#Requires -Version 3

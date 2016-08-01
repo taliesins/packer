@@ -76,7 +76,7 @@ type Driver interface {
 
 	SetSecureBoot(string, bool) error
 
-	EnableVirtualMachineIntegrationService(string, string) error
+	EnableAllVirtualMachineIntegrationServices(string) error
 
 	ExportVirtualMachine(string, string) error
 

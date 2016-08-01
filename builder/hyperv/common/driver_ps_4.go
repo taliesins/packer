@@ -185,8 +185,8 @@ func (d *HypervPS4Driver) SetSecureBoot(vmName string, enable bool) error {
 	return hyperv.SetSecureBoot(vmName, enable)
 }
 
-func (d *HypervPS4Driver) EnableVirtualMachineIntegrationService(vmName string, integrationServiceName string) error {
-	return hyperv.EnableVirtualMachineIntegrationService(vmName, integrationServiceName)
+func (d *HypervPS4Driver) EnableAllVirtualMachineIntegrationServices(vmName string) error {
+	return hyperv.EnableAllVirtualMachineIntegrationServices(vmName)
 }
 
 func (d *HypervPS4Driver) ExportVirtualMachine(vmName string, path string) error {

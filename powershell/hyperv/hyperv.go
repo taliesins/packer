@@ -470,15 +470,15 @@ if ($vm.State -eq [Microsoft.HyperV.PowerShell.VMState]::Running) {
 	return err
 }
 
-func EnableVirtualMachineIntegrationService(vmName string, integrationServiceName string) error {
+func EnableAllVirtualMachineIntegrationServices(vmName string) error {
 
 	var script = `
-param([string]$vmName,[string]$integrationServiceName)
-Enable-VMIntegrationService -VMName $vmName -Name $integrationServiceName
+param([string]$vmName)
+Get-VMIntegrationService -VMName $vmName | Enable-VMIntegrationService
 `
 
 	var ps powershell.PowerShellCmd
-	err := ps.Run(script, vmName, integrationServiceName)
+	err := ps.Run(script, vmName)
 	return err
 }
 

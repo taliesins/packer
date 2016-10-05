@@ -6,6 +6,9 @@ package common
 
 import (
 	"fmt"
+	"log"
+	"strings"
+	"time"
 
 	"github.com/mitchellh/multistep"
 	"github.com/mitchellh/packer/packer"
@@ -33,53 +36,53 @@ func (s *StepConfigureIP) Run(state multistep.StateBag) multistep.StepAction {
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
-	/*
-		count := 60
-		var duration time.Duration = 1
-		sleepTime := time.Minute * duration
-		var ip string
 
-			for count != 0 {
-				cmdOut, err := driver.GetVirtualMachineNetworkAdapterAddress(vmName)
-				if err != nil {
-					err := fmt.Errorf(errorMsg, err)
-					state.Put("error", err)
-					ui.Error(err.Error())
-					return multistep.ActionHalt
-				}
+	count := 60
+	var duration time.Duration = 1
+	sleepTime := time.Minute * duration
+	var ip string
 
-				ip = strings.TrimSpace(string(cmdOut))
+	for count != 0 {
+		cmdOut, err := driver.GetVirtualMachineNetworkAdapterAddress(vmName)
+		if err != nil {
+			err := fmt.Errorf(errorMsg, err)
+			state.Put("error", err)
+			ui.Error(err.Error())
+			return multistep.ActionHalt
+		}
 
-				if ip != "False" {
-					break
-				}
+		ip = strings.TrimSpace(string(cmdOut))
 
-				log.Println(fmt.Sprintf("Waiting for another %v minutes...", uint(duration)))
-				time.Sleep(sleepTime)
-				count--
-			}
+		if ip != "False" {
+			break
+		}
 
-			if count == 0 {
-				err := fmt.Errorf(errorMsg, "IP address assigned to the adapter is empty")
-				state.Put("error", err)
-				ui.Error(err.Error())
-				return multistep.ActionHalt
-			}
+		log.Println(fmt.Sprintf("Waiting for another %v minutes...", uint(duration)))
+		time.Sleep(sleepTime)
+		count--
+	}
 
-			ui.Say("ip address is " + ip)
+	if count == 0 {
+		err := fmt.Errorf(errorMsg, "IP address assigned to the adapter is empty")
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
 
-			hostName, err := driver.GetHostName(ip)
-			if err != nil {
-				state.Put("error", err)
-				ui.Error(err.Error())
-				return multistep.ActionHalt
-			}
+	ui.Say("ip address is " + ip)
 
-			ui.Say("hostname is " + hostName)
+	hostName, err := driver.GetHostName(ip)
+	if err != nil {
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
 
-			state.Put("ip", ip)
-			state.Put("hostname", hostName)
-	*/
+	ui.Say("hostname is " + hostName)
+
+	state.Put("ip", ip)
+	state.Put("hostname", hostName)
+
 	return multistep.ActionContinue
 }
 

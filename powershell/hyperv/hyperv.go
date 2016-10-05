@@ -981,3 +981,66 @@ param([string]$vmName, [string]$scanCodes)
 	err := ps.Run(script, vmName, scanCodes)
 	return err
 }
+
+func SetVirtualMachineIPNetworkConfiguration(vmName string, IPAddress string, Gateway string, DNSServer string, Subnet string) error {
+
+	var script = `
+[CmdletBinding()]
+    Param (
+        
+        [string]$vmName,
+        [String[]]$IPAddress = @(),
+        [String[]]$Gateway = @(),
+        [String[]]$DNSServers = @(),
+        [String[]]$Subnet = @()
+    )
+	$NetworkAdapter = Get-VMNetworkAdapter -VMName $vmName | Select -first 1
+    $vm = Get-WmiObject -Namespace 'root\virtualization\v2' -Class 'Msvm_ComputerSystem' | Where-Object {
+        $_.ElementName -eq $NetworkAdapter.VMName
+    }
+    $VMSettings = $vm.GetRelated('Msvm_VirtualSystemSettingData') | Where-Object {
+        $_.VirtualSystemType -eq 'Microsoft:Hyper-V:System:Realized'
+    }
+    $VMNetAdapters = $VMSettings.GetRelated('Msvm_SyntheticEthernetPortSettingData')
+
+    $NetworkSettings = @()
+    foreach ($NetAdapter in $VMNetAdapters)
+    {
+        if ($NetAdapter.Address -eq $NetworkAdapter.MacAddress)
+        {
+            $NetworkSettings = $NetworkSettings + $NetAdapter.GetRelated('Msvm_GuestNetworkAdapterConfiguration')
+        }
+    }
+
+    $NetworkSettings[0].IPAddresses = $IPAddress
+    $NetworkSettings[0].DefaultGateways = $Gateway
+    $NetworkSettings[0].DNSServers = $DNSServers
+    $NetworkSettings[0].Subnets = $Subnet
+    $NetworkSettings[0].ProtocolIFType = 4096
+    $NetworkSettings[0].DHCPEnabled = $false
+
+
+    $Service = Get-WmiObject -Class 'Msvm_VirtualSystemManagementService' -Namespace 'root\virtualization\v2'
+    $setIP = $Service.SetGuestNetworkAdapterConfiguration($vm, $NetworkSettings[0].GetText(1))
+
+    if ($setIP.ReturnValue -eq 4096)
+    {
+        $job = [WMI]$setIP.job
+
+        while ($job.JobState -eq 3 -or $job.JobState -eq 4)
+        {
+            Start-Sleep 1
+            $job = [WMI]$setIP.job
+        }
+
+        if ($job.JobState -ne 7)
+        {
+            $job.GetError()
+        }
+    }
+    (Get-VM -Id $NetworkAdapter.VmId).NetworkAdapter | Select-Object Name, IpAddress
+`
+	var ps powershell.PowerShellCmd
+	err := ps.Run(script, vmName, IPAddress, Gateway, DNSServer, Subnet)
+	return err
+}

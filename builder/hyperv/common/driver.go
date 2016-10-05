@@ -105,4 +105,6 @@ type Driver interface {
 	MountFloppyDrive(string, string) error
 
 	UnmountFloppyDrive(string) error
+
+	SetVirtualMachineIPNetworkConfiguration(string, string, string, string, string) error
 }

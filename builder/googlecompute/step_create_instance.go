@@ -31,7 +31,7 @@ func (c *Config) createInstanceMetadata(sourceImage *Image, sshPublicKey string)
 		sshKeys = fmt.Sprintf("%s\n%s", sshKeys, confSshKeys)
 	}
 	instanceMetadata[sshMetaKey] = sshKeys
-	
+
 	// Wrap any startup script with our own startup script.
 	if c.StartupScriptFile != "" {
 		var content []byte
@@ -76,6 +76,10 @@ func (s *StepCreateInstance) Run(state multistep.StateBag) multistep.StepAction 
 		return multistep.ActionHalt
 	}
 
+	if sourceImage.IsWindows() && c.Comm.Type == "winrm" && c.Comm.WinRMPassword == "" {
+		state.Put("create_windows_password", true)
+	}
+
 	ui.Say("Creating instance...")
 	name := c.InstanceName
 
@@ -96,6 +100,7 @@ func (s *StepCreateInstance) Run(state multistep.StateBag) multistep.StepAction 
 		Preemptible:         c.Preemptible,
 		Region:              c.Region,
 		ServiceAccountEmail: c.Account.ClientEmail,
+		Scopes:              c.Scopes,
 		Subnetwork:          c.Subnetwork,
 		Tags:                c.Tags,
 		Zone:                c.Zone,

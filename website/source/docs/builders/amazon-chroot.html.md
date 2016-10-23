@@ -97,8 +97,8 @@ each category, the available configuration keys are alphabetized.
     you are building. This option is required to register HVM images. Can be
     "paravirtual" (default) or "hvm".
 
--   `chroot_mounts` (array of array of strings) - This is a list of additional
-    devices to mount into the chroot environment. This configuration parameter
+-   `chroot_mounts` (array of array of strings) - This is a list of devices
+    to mount into the chroot environment. This configuration parameter
     requires some additional documentation which is in the "Chroot Mounts"
     section below. Please read that section for more information on how to
     use this.
@@ -107,11 +107,11 @@ each category, the available configuration keys are alphabetized.
     `{{.Command}}`. This may be useful to set if you want to set environmental
     variables or perhaps run it with `sudo` or so on. This is a configuration
     template where the `.Command` variable is replaced with the command to
-    be run.
+    be run. Defaults to "{{.Command}}".
 
 -   `copy_files` (array of strings) - Paths to files on the running EC2 instance
-    that will be copied into the chroot environment prior to provisioning. This
-    is useful, for example, to copy `/etc/resolv.conf` so that DNS lookups work.
+    that will be copied into the chroot environment prior to provisioning. Defaults
+    to `/etc/resolv.conf` so that DNS lookups work.
 
 -   `device_path` (string) - The path to the device where the root volume of the
     source AMI will be attached. This defaults to "" (empty string), which
@@ -139,7 +139,7 @@ each category, the available configuration keys are alphabetized.
 
 -   `mount_path` (string) - The path where the volume will be mounted. This is
     where the chroot environment will be. This defaults to
-    `packer-amazon-chroot-volumes/{{.Device}}`. This is a configuration template
+    `/mnt/packer-amazon-chroot-volumes/{{.Device}}`. This is a configuration template
     where the `.Device` variable is replaced with the name of the device where
     the volume is attached.
 
@@ -188,7 +188,7 @@ Here is a basic example. It is completely valid except for the access keys:
 
 ## Chroot Mounts
 
-The `chroot_mounts` configuration can be used to mount additional devices within
+The `chroot_mounts` configuration can be used to mount specific devices within
 the chroot. By default, the following additional mounts are added into the
 chroot by Packer:
 
@@ -200,7 +200,8 @@ chroot by Packer:
 
 These default mounts are usually good enough for anyone and are sane defaults.
 However, if you want to change or add the mount points, you may using the
-`chroot_mounts` configuration. Here is an example configuration:
+`chroot_mounts` configuration. Here is an example configuration which only
+mounts `/prod` and `/dev`:
 
 ``` {.javascript}
 {

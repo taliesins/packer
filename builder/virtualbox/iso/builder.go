@@ -37,16 +37,19 @@ type Config struct {
 	vboxcommon.VBoxManagePostConfig `mapstructure:",squash"`
 	vboxcommon.VBoxVersionConfig    `mapstructure:",squash"`
 
-	BootCommand          []string `mapstructure:"boot_command"`
-	DiskSize             uint     `mapstructure:"disk_size"`
-	GuestAdditionsMode   string   `mapstructure:"guest_additions_mode"`
-	GuestAdditionsPath   string   `mapstructure:"guest_additions_path"`
-	GuestAdditionsURL    string   `mapstructure:"guest_additions_url"`
-	GuestAdditionsSHA256 string   `mapstructure:"guest_additions_sha256"`
-	GuestOSType          string   `mapstructure:"guest_os_type"`
-	HardDriveInterface   string   `mapstructure:"hard_drive_interface"`
-	ISOInterface         string   `mapstructure:"iso_interface"`
-	VMName               string   `mapstructure:"vm_name"`
+	BootCommand            []string `mapstructure:"boot_command"`
+	DiskSize               uint     `mapstructure:"disk_size"`
+	KeepRegistered         bool     `mapstructure:"keep_registered"`
+	GuestAdditionsMode     string   `mapstructure:"guest_additions_mode"`
+	GuestAdditionsPath     string   `mapstructure:"guest_additions_path"`
+	GuestAdditionsURL      string   `mapstructure:"guest_additions_url"`
+	GuestAdditionsSHA256   string   `mapstructure:"guest_additions_sha256"`
+	GuestOSType            string   `mapstructure:"guest_os_type"`
+	HardDriveInterface     string   `mapstructure:"hard_drive_interface"`
+	HardDriveNonrotational bool     `mapstructure:"hard_drive_nonrotational"`
+	HardDriveDiscard       bool     `mapstructure:"hard_drive_discard"`
+	ISOInterface           string   `mapstructure:"iso_interface"`
+	VMName                 string   `mapstructure:"vm_name"`
 
 	ctx interpolate.Context
 }
@@ -194,7 +197,8 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			Path:  b.config.OutputDir,
 		},
 		&common.StepCreateFloppy{
-			Files: b.config.FloppyFiles,
+			Files:       b.config.FloppyConfig.FloppyFiles,
+			Directories: b.config.FloppyConfig.FloppyDirectories,
 		},
 		&common.StepHTTPServer{
 			HTTPDir:     b.config.HTTPDir,
@@ -254,6 +258,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		&vboxcommon.StepShutdown{
 			Command: b.config.ShutdownCommand,
 			Timeout: b.config.ShutdownTimeout,
+			Delay:   b.config.PostShutdownDelay,
 		},
 		new(vboxcommon.StepRemoveDevices),
 		&vboxcommon.StepVBoxManage{

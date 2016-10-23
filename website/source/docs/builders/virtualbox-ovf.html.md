@@ -132,6 +132,12 @@ builder.
     and \[\]) are allowed. Directory names are also allowed, which will add all
     the files found in the directory to the floppy.
 
+-   `floppy_dirs` (array of strings) - A list of directories to place onto
+    the floppy disk recursively. This is similar to the `floppy_files` option
+    except that the directory structure is preserved. This is useful for when
+    your floppy disk includes drivers or if you just want to organize it's 
+    contents as a hierarchy. Wildcard characters (\*, ?, and \[\]) are allowed.
+
 -   `format` (string) - Either "ovf" or "ova", this specifies the output format
     of the exported virtual machine. This defaults to "ovf".
 
@@ -193,6 +199,11 @@ builder.
     is executed. This directory must not exist or be empty prior to running
     the builder. By default this is "output-BUILDNAME" where "BUILDNAME" is the
     name of the build.
+
+-   `post_shutdown_delay` (string) - The amount of time to wait after shutting
+    down the virtual machine. If you get the error `Error removing floppy
+    controller`, you might need to set this to `5m` or so. By default, the
+    delay is `0s`, or disabled.
 
 -   `shutdown_command` (string) - The command to use to gracefully shut down the
     machine once all the provisioning is done. By default this is an empty

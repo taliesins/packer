@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/mitchellh/packer/packer"
@@ -105,11 +104,6 @@ func (c *comm) Start(cmd *packer.RemoteCmd) (err error) {
 		return
 	}
 
-	// A channel to keep track of our done state
-	doneCh := make(chan struct{})
-	sessionLock := new(sync.Mutex)
-	timedOut := false
-
 	// Start a goroutine to wait for the session to end and set the
 	// exit boolean and status.
 	go func() {
@@ -118,25 +112,19 @@ func (c *comm) Start(cmd *packer.RemoteCmd) (err error) {
 		err := session.Wait()
 		exitStatus := 0
 		if err != nil {
-			exitErr, ok := err.(*ssh.ExitError)
-			if ok {
-				exitStatus = exitErr.ExitStatus()
+			switch err.(type) {
+			case *ssh.ExitError:
+				exitStatus = err.(*ssh.ExitError).ExitStatus()
+				log.Printf("Remote command exited with '%d': %s", exitStatus, cmd.Command)
+			case *ssh.ExitMissingError:
+				log.Printf("Remote command exited without exit status or exit signal.")
+				exitStatus = packer.CmdDisconnect
+			default:
+				log.Printf("Error occurred waiting for ssh session: %s", err.Error())
 			}
 		}
-
-		sessionLock.Lock()
-		defer sessionLock.Unlock()
-
-		if timedOut {
-			// We timed out, so set the exit status to -1
-			exitStatus = -1
-		}
-
-		log.Printf("remote command exited with '%d': %s", exitStatus, cmd.Command)
 		cmd.SetExited(exitStatus)
-		close(doneCh)
 	}()
-
 	return
 }
 
@@ -250,7 +238,11 @@ func (c *comm) newSession() (session *ssh.Session, err error) {
 			return nil, err
 		}
 
-		return c.client.NewSession()
+		if c.client == nil {
+			err = errors.New("client not available")
+		} else {
+			session, err = c.client.NewSession()
+		}
 	}
 
 	return session, nil

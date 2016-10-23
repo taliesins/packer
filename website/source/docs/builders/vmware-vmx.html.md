@@ -83,6 +83,12 @@ builder.
     and \[\]) are allowed. Directory names are also allowed, which will add all
     the files found in the directory to the floppy.
 
+-   `floppy_dirs` (array of strings) - A list of directories to place onto
+    the floppy disk recursively. This is similar to the `floppy_files` option
+    except that the directory structure is preserved. This is useful for when
+    your floppy disk includes drivers or if you just want to organize it's 
+    contents as a hierarchy. Wildcard characters (\*, ?, and \[\]) are allowed.
+
 -   `fusion_app_path` (string) - Path to "VMware Fusion.app". By default this is
     "/Applications/VMware Fusion.app" but this setting allows you to
     customize this.
@@ -132,6 +138,17 @@ builder.
     certain rare cases, this might actually end up making the resulting disks
     slightly larger. If you find this to be the case, you can disable compaction
     using this configuration value.
+
+-   `tools_upload_flavor` (string) - The flavor of the VMware Tools ISO to
+    upload into the VM. Valid values are "darwin", "linux", and "windows". By
+    default, this is empty, which means VMware tools won't be uploaded.
+
+-   `tools_upload_path` (string) - The path in the VM to upload the
+    VMware tools. This only takes effect if `tools_upload_flavor` is non-empty.
+    This is a [configuration
+    template](/docs/templates/configuration-templates.html) that has a single
+    valid variable: `Flavor`, which will be the value of `tools_upload_flavor`.
+    By default the upload path is set to `{{.Flavor}}.iso`.
 
 -   `vm_name` (string) - This is the name of the VMX file for the new virtual
     machine, without the file extension. By default this is "packer-BUILDNAME",

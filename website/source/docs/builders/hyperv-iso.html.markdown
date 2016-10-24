@@ -145,6 +145,16 @@ can be configured for this builder.
 	five seconds and one minute 30 seconds, respectively. If this isn't specified,
 	the default is 10 seconds.
 
+-   `ip_address` (string) - Static IP address to be set to the VM. This is particulary useful when you
+    don't have a DHCP server available, like when you are using a NAT switch in HyperV.
+
+-   `subnet_mask` (string) - Subnet mask of the IP address set for the virtual machine.
+
+-   `gateway` (string) - Default Gateway of the virtual machine
+
+-   `dns_server` (string) - DNS server IP address for name resolution by the VM, need to be 
+    accessible from the virtual network. 
+
 -   `iso_urls` (array of strings) - Multiple URLs for the ISO to download.
 	Packer will try these in order. If anything goes wrong attempting to download
 	or while downloading a single URL, it will move on to the next. All URLs

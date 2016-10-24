@@ -246,6 +246,10 @@ func (d *HypervPS4Driver) UnmountFloppyDrive(vmName string) error {
 	return hyperv.UnmountFloppyDrive(vmName)
 }
 
+func (d *HypervPS4Driver) SetVirtualMachineIPNetworkConfiguration(vmName string, IPAddress string, Gateway string, DNSServer string, Subnet string) error {
+	return hyperv.SetVirtualMachineIPNetworkConfiguration(vmName, IPAddress, Gateway, DNSServer, Subnet)
+}
+
 func (d *HypervPS4Driver) verifyPSVersion() error {
 
 	log.Printf("Enter method: %s", "verifyPSVersion")

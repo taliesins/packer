@@ -6,17 +6,22 @@ package common
 
 import (
 	"fmt"
-	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/packer"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/mitchellh/multistep"
+	"github.com/mitchellh/packer/packer"
 )
 
-type StepConfigureIp struct {
+type StepConfigureIP struct {
+	IPAddress string
+	Gateway   string
+	DNSServer string
+	Subnet    string
 }
 
-func (s *StepConfigureIp) Run(state multistep.StateBag) multistep.StepAction {
+func (s *StepConfigureIP) Run(state multistep.StateBag) multistep.StepAction {
 	driver := state.Get("driver").(Driver)
 	ui := state.Get("ui").(packer.Ui)
 
@@ -24,6 +29,13 @@ func (s *StepConfigureIp) Run(state multistep.StateBag) multistep.StepAction {
 	vmName := state.Get("vmName").(string)
 
 	ui.Say("Configuring ip address...")
+	err := driver.SetVirtualMachineIPNetworkConfiguration(vmName, s.IPAddress, s.Gateway, s.DNSServer, s.Subnet)
+	if err != nil {
+		err := fmt.Errorf(errorMsg, err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
 
 	count := 60
 	var duration time.Duration = 1
@@ -74,6 +86,6 @@ func (s *StepConfigureIp) Run(state multistep.StateBag) multistep.StepAction {
 	return multistep.ActionContinue
 }
 
-func (s *StepConfigureIp) Cleanup(state multistep.StateBag) {
+func (s *StepConfigureIP) Cleanup(state multistep.StateBag) {
 	// do nothing
 }

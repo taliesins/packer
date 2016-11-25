@@ -130,6 +130,9 @@ Set-VMBios -VMName $vmName -StartupOrder @("CD", "IDE","LegacyNetworkAdapter","F
 	} else {
 		script := `
 param([string]$vmName,[int]$controllerNumber,[int]$controllerLocation)
+$old_boot_order = Get-VMFirmware -VMName $VMName | Select-Object -ExpandProperty BootOrder
+$new_boot_order = $old_boot_order | Where-Object { $_.BootType -ne "Network" }
+Set-VMFirmware -VMName $VMName -BootOrder $new_boot_order
 $vmDvdDrive = Get-VMDvdDrive -VMName $vmName -ControllerNumber $controllerNumber -ControllerLocation $controllerLocation
 if (!$vmDvdDrive) {throw 'unable to find dvd drive'}
 Set-VMFirmware -VMName $vmName -FirstBootDevice $vmDvdDrive -ErrorAction SilentlyContinue

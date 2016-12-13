@@ -3,6 +3,12 @@
 	"ignore": "test appengine",
 	"package": [
 		{
+			"checksumSHA1": "aABATU51PlDHfGeSe5cc9udwSXg=",
+			"path": "github.com/1and1/oneandone-cloudserver-sdk-go",
+			"revision": "5678f03fc801525df794f953aa82f5ad7555a2ef",
+			"revisionTime": "2016-08-11T22:04:02Z"
+		},
+		{
 			"checksumSHA1": "/WG++Jij8INZ80tER+FAiIDMmws=",
 			"comment": "v3.1.0-beta",
 			"path": "github.com/Azure/azure-sdk-for-go/arm/compute",
@@ -339,6 +345,12 @@
 			"revision": "2a60fc2ba6c19de80291203597d752e9ba58e4c0"
 		},
 		{
+			"checksumSHA1": "e/Kc2UOy1lKAy31xWlK37M1r2e8=",
+			"path": "github.com/google/shlex",
+			"revision": "6f45313302b9c56850fc17f99e40caebce98c716",
+			"revisionTime": "2015-01-27T13:39:51Z"
+		},
+		{
 			"checksumSHA1": "FUiF2WLrih0JdHsUTMMDz3DRokw=",
 			"comment": "20141209094003-92-g95fa852",
 			"path": "github.com/hashicorp/atlas-go/archive",
@@ -583,10 +595,11 @@
 			"revision": "53d1dc4400e1ebcd37a0e01d8c1fe2f4db3b99d2"
 		},
 		{
-			"checksumSHA1": "Sr9NH+ww7ZTDfFJF8OBqMSeQfiE=",
+			"checksumSHA1": "KgPqSv4WKquMdM3Y0FxKIfqf/tw=",
 			"comment": "v1.0.0-810-g53d1dc4",
 			"path": "github.com/rackspace/gophercloud/openstack",
-			"revision": "53d1dc4400e1ebcd37a0e01d8c1fe2f4db3b99d2"
+			"revision": "69cc33768d3318e48fa47a216722d2737e84158b",
+			"revisionTime": "2016-04-06T18:51:52Z"
 		},
 		{
 			"checksumSHA1": "/K+RHJM5BFeg+3DYsR3WKPh7oVo=",
@@ -733,10 +746,10 @@
 			"revision": "1f22c0103821b9390939b6776727195525381532"
 		},
 		{
-			"checksumSHA1": "1LydpuiE3oBdkbYvSdKKwe9lsLs=",
+			"checksumSHA1": "LlElMHeTC34ng8eHzjvtUhAgrr8=",
 			"path": "golang.org/x/crypto/ssh",
-			"revision": "7682e7e3945130cf3cde089834664f68afdd1523",
-			"revisionTime": "2016-10-03T20:54:26Z"
+			"revision": "9477e0b78b9ac3d0b03822fd95422e2fe07627cd",
+			"revisionTime": "2016-10-31T15:37:30Z"
 		},
 		{
 			"checksumSHA1": "SJ3Ma3Ozavxpbh1usZWBCnzMKIc=",

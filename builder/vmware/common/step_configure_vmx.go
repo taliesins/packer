@@ -63,6 +63,8 @@ func (s *StepConfigureVMX) Run(state multistep.StateBag) multistep.StepAction {
 		if floppyPathRaw, ok := state.GetOk("floppy_path"); ok {
 			log.Println("Floppy path present, setting in VMX")
 			vmxData["floppy0.present"] = "TRUE"
+			vmxData["floppy0.startConnected"] = "FALSE"
+			vmxData["floppy0.autodetect"] = "file"
 			vmxData["floppy0.filetype"] = "file"
 			vmxData["floppy0.filename"] = floppyPathRaw.(string)
 			ui.Say("Configuring floppy drive")

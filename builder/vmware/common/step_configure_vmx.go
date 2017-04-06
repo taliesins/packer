@@ -65,7 +65,12 @@ func (s *StepConfigureVMX) Run(state multistep.StateBag) multistep.StepAction {
 			vmxData["floppy0.present"] = "TRUE"
 			vmxData["floppy0.filetype"] = "file"
 			vmxData["floppy0.filename"] = floppyPathRaw.(string)
+			ui.Say("Configuring floppy drive")
+		} else {
+			ui.Say("No floppy to configure")
 		}
+	} else {
+		ui.Say("Skipping floppy")
 	}
 
 	if err := WriteVMX(vmxPath, vmxData); err != nil {
